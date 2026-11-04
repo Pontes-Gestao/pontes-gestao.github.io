@@ -1,0 +1,23 @@
+/* Páginas de texto (privacidade, termos) no visual Pontes, sem animação. */
+:root{
+  --bg:#070C12; --panel:rgba(13,22,31,.86); --cyan:#2CC5D0; --line:rgba(44,197,208,.2); --line-hi:rgba(44,197,208,.6);
+  --text:#E2F3F5; --muted:#8FA9B2;
+  --display:'Orbitron','Exo 2',system-ui,sans-serif; --body:'Exo 2',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--body);font-size:17px;line-height:1.7;color:var(--text);background:var(--bg);
+  background-image:radial-gradient(1200px 600px at 50% -10%,rgba(44,197,208,.14),transparent 60%)}
+a{color:var(--cyan)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.wrap{max-width:780px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 60px}
+.back{font-family:var(--mono);font-size:13px;text-decoration:none;border:1px solid var(--line);padding:8px 14px;border-radius:10px;color:var(--text);display:inline-block}
+.back:hover{border-color:var(--line-hi)}
+h1{font-family:var(--display);font-size:clamp(26px,4.5vw,38px);letter-spacing:.03em;line-height:1.2;margin:28px 0 6px;text-wrap:balance}
+.updated{font-family:var(--mono);font-size:13px;color:var(--muted);margin:0 0 28px}
+h2{font-family:var(--display);font-size:18px;letter-spacing:.05em;color:var(--cyan);margin:34px 0 8px;text-wrap:balance}
+p,li{color:#C9DEE2}
+ul{padding-left:22px}
+li{margin-bottom:6px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
