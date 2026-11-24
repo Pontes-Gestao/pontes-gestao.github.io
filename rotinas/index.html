@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ronda · rotinas do restaurante</title>
+<meta name="description" content="Rotinas do restaurante no celular do gerente, com lembretes, comprovação por foto e acompanhamento do dono. Da Pontes – Consultoria e Gestão de iFood.">
+<meta name="theme-color" content="#070C12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ronda">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Exo+2:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070C12; --panel:#0D161F; --panel2:#122130; --cyan:#2CC5D0; --cyan-hi:#7DF3F8; --faint:rgba(44,197,208,.1);
+  --line:rgba(44,197,208,.2); --line-hi:rgba(44,197,208,.6); --text:#E2F3F5; --muted:#8FA9B2; --ink:#04161A;
+  --gold:#FFD27A; --red:#FF6B7A; --green:#5BE49B; --orange:#FFA65C;
+  --display:'Orbitron','Exo 2',system-ui,sans-serif; --body:'Exo 2',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.45}
+body{background-image:radial-gradient(900px 500px at 50% -10%,rgba(44,197,208,.16),transparent 60%);min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--cyan-hi);outline-offset:2px}
+.app{max-width:520px;margin:0 auto;min-height:100vh;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px calc(env(safe-area-inset-bottom,0px) + 96px)}
+h1,h2,h3{margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin:22px 0 10px}
+p{margin:0}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.small{font-size:13px}
+
+/* topo */
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{width:38px;height:38px;border-radius:10px;box-shadow:0 0 0 1px var(--line-hi),0 0 16px -4px rgba(44,197,208,.6)}
+.brand b{font-family:var(--display);letter-spacing:.14em;color:var(--cyan);font-size:18px;display:block;line-height:1}
+.brand small{color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.chip-btn{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:7px 12px;font-size:13px;display:inline-flex;gap:6px;align-items:center}
+.chip-btn:hover{border-color:var(--line-hi)}
+
+/* cartões */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
+.card.glow{box-shadow:0 0 0 1px var(--line),0 18px 40px -18px rgba(0,0,0,.8),0 0 30px -12px rgba(44,197,208,.4)}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+
+/* herói do gerente */
+.hero{position:relative;overflow:hidden}
+.avatar{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-size:28px;background:var(--panel2);box-shadow:0 0 0 2px var(--c,var(--cyan))}
+.lvl{font-family:var(--mono);font-size:12px;color:var(--gold);letter-spacing:.06em;text-transform:uppercase}
+.bar{height:10px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--cyan),var(--cyan-hi));box-shadow:0 0 12px var(--cyan);transition:width .6s}
+.bar.gold>i{background:linear-gradient(90deg,#E8A93A,var(--gold));box-shadow:0 0 12px var(--gold)}
+.stat{background:var(--panel2);border-radius:14px;padding:10px;text-align:center}
+.stat b{display:block;font-family:var(--display);font-size:20px}
+.stat span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.flame{color:var(--orange)}
+
+/* missão agora */
+.now{border-color:var(--line-hi);background:linear-gradient(160deg,rgba(44,197,208,.18),var(--panel) 60%)}
+.now.late{border-color:rgba(255,107,122,.6);background:linear-gradient(160deg,rgba(255,107,122,.18),var(--panel) 60%)}
+.now h3{font-size:21px;margin:6px 0 4px}
+.tag{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--faint);color:var(--cyan)}
+.tag.red{background:rgba(255,107,122,.15);color:var(--red)}
+.tag.green{background:rgba(91,228,155,.13);color:var(--green)}
+.tag.gold{background:rgba(255,210,122,.13);color:var(--gold)}
+.tag.gray{background:rgba(255,255,255,.06);color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:14px 18px;font-weight:800;font-size:16px;background:var(--cyan);color:var(--ink);box-shadow:0 0 24px -6px var(--cyan);width:100%}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);box-shadow:none}
+.btn.red{background:var(--red);box-shadow:0 0 24px -6px var(--red)}
+.btn.sm{padding:9px 12px;font-size:14px;width:auto;border-radius:11px}
+
+/* linha do tempo */
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:flex;gap:12px;align-items:center;padding:12px 4px;border-bottom:1px solid rgba(255,255,255,.05)}
+.tl li:last-child{border-bottom:0}
+.tl .hr{font-family:var(--mono);font-size:14px;color:var(--muted);width:48px;flex:none}
+.tl .ico{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex:none;background:var(--panel2);font-size:16px}
+.tl .ico.done{background:rgba(91,228,155,.15);color:var(--green)}
+.tl .ico.late{background:rgba(255,107,122,.15);color:var(--red)}
+.tl .ico.now{background:var(--cyan);color:var(--ink);box-shadow:0 0 14px var(--cyan)}
+.tl .tt{flex:1;min-width:0}
+.tl .tt b{display:block;font-weight:600;line-height:1.25}
+.tl .tt span{font-size:12px;color:var(--muted)}
+.tl button.go{border:1px solid var(--line-hi);background:var(--faint);color:var(--cyan);border-radius:10px;padding:7px 11px;font-weight:700;font-size:13px}
+.tl li.clickable{cursor:pointer}
+
+/* alertas */
+.alert{display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:14px;margin-bottom:8px;background:rgba(255,107,122,.09);border:1px solid rgba(255,107,122,.3)}
+.alert.warn{background:rgba(255,210,122,.08);border-color:rgba(255,210,122,.3)}
+.alert.ok{background:rgba(91,228,155,.07);border-color:rgba(91,228,155,.25)}
+.alert .em{font-size:20px;line-height:1.2}
+.alert b{font-weight:700}
+
+/* conquistas */
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.badge{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center}
+.badge .e{font-size:32px;display:block}
+.badge b{display:block;font-size:13px;margin-top:4px}
+.badge span{font-size:11px;color:var(--muted);display:block;line-height:1.3;margin-top:2px}
+.badge.off{opacity:.38;filter:grayscale(1)}
+.badge.off .e{filter:blur(.5px)}
+
+/* ranking */
+.rank li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.rank{list-style:none;padding:0;margin:0}
+.rank .pos{font-family:var(--display);width:28px;text-align:center;color:var(--muted)}
+.rank li:first-child .pos{color:var(--gold)}
+
+/* gráfico */
+.chart{display:flex;align-items:flex-end;gap:8px;height:130px;padding-top:8px}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.chart .col i{display:block;width:100%;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,var(--cyan-hi),var(--cyan));min-height:3px}
+.chart .col i.low{background:linear-gradient(180deg,#FF9AA5,var(--red))}
+.chart .col i.mid{background:linear-gradient(180deg,#FFE3A8,var(--gold))}
+.chart .col small{font-size:11px;color:var(--muted)}
+.chart .col em{font-style:normal;font-family:var(--mono);font-size:11px}
+
+/* nav inferior */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(7,12,18,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 8px calc(env(safe-area-inset-bottom,0px) + 6px)}
+.nav .in{max-width:520px;margin:0 auto;display:flex}
+.nav button{flex:1;background:none;border:0;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;padding:6px 2px;border-radius:12px;position:relative}
+.nav button .i{font-size:21px;line-height:1}
+.nav button.on{color:var(--cyan)}
+.nav button.on .i{filter:drop-shadow(0 0 8px var(--cyan))}
+.nav .dot{position:absolute;top:3px;right:calc(50% - 20px);min-width:17px;height:17px;border-radius:9px;background:var(--red);color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;padding:0 4px}
+
+/* formulários e modal */
+.sheet-bg{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
+.sheet{width:100%;max-width:520px;max-height:92vh;overflow:auto;background:var(--panel);border:1px solid var(--line-hi);border-bottom:0;border-radius:22px 22px 0 0;padding:20px 16px calc(env(safe-area-inset-bottom,0px) + 20px);animation:up .25s}
+.sheet h3{font-family:var(--display);font-size:18px;letter-spacing:.04em;margin-bottom:4px}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+@keyframes fade{from{opacity:0}}
+label.f{display:block;margin:14px 0 6px;font-size:13px;color:var(--muted);font-weight:600}
+.in-f{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:16px}
+.in-f:focus{border-color:var(--cyan);outline:none}
+textarea.in-f{min-height:90px;resize:vertical}
+.days{display:flex;gap:6px;flex-wrap:wrap}
+.days label{flex:1;min-width:40px}
+.days input{position:absolute;opacity:0;pointer-events:none}
+.days span{display:block;text-align:center;padding:9px 0;border-radius:10px;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--muted)}
+.days input:checked+span{background:var(--cyan);color:var(--ink);border-color:var(--cyan)}
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.yn button{padding:22px 0;border-radius:16px;font-size:20px;font-weight:800;border:2px solid var(--line)}
+.yn button.y{background:rgba(91,228,155,.1);border-color:rgba(91,228,155,.5);color:var(--green)}
+.yn button.n{background:rgba(255,107,122,.1);border-color:rgba(255,107,122,.5);color:var(--red)}
+.yn button.sel{box-shadow:0 0 0 3px currentColor}
+.photo-drop{display:grid;place-items:center;gap:6px;text-align:center;border:2px dashed var(--line-hi);border-radius:16px;padding:26px 12px;margin-top:14px;background:var(--faint);color:var(--cyan);font-weight:700;cursor:pointer}
+.photo-drop img{max-width:100%;border-radius:12px;max-height:280px}
+.check{display:flex;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;margin-top:8px}
+.check input{width:22px;height:22px;accent-color:var(--cyan)}
+.proof-img{width:100%;border-radius:14px;margin-top:10px}
+.ph{display:grid;place-items:center;height:160px;border-radius:14px;margin-top:10px;background:repeating-linear-gradient(45deg,var(--panel2) 0 12px,var(--panel) 12px 24px);color:var(--muted);font-size:13px}
+
+/* comemoração */
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 12px);transform:translateX(-50%);z-index:60;background:var(--panel2);border:1px solid var(--line-hi);border-radius:14px;padding:12px 16px;width:min(92vw,480px);box-shadow:0 10px 30px rgba(0,0,0,.6);animation:drop .3s;font-size:14px}
+@keyframes drop{from{transform:translate(-50%,-30px);opacity:0}}
+.party{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(4,10,15,.93);animation:fade .2s}
+.party .box{text-align:center;padding:24px;max-width:340px}
+.party .big{font-family:var(--display);font-size:54px;color:var(--gold);text-shadow:0 0 30px rgba(255,210,122,.7);animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+.party .em{font-size:72px;animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+.party h3{font-family:var(--display);font-size:20px;margin:8px 0 6px;letter-spacing:.04em}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
+.confetti{position:fixed;top:-12px;width:9px;height:14px;z-index:55;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+/* escolha de perfil */
+.pick{display:grid;gap:10px;margin-top:16px}
+.pick button{display:flex;align-items:center;gap:14px;text-align:left;padding:16px;border-radius:18px;background:var(--panel);border:1px solid var(--line)}
+.pick button:hover{border-color:var(--line-hi)}
+.pick b{display:block;font-size:17px}
+.empty{text-align:center;padding:24px 10px;color:var(--muted)}
+.ring{--p:0;width:74px;height:74px;border-radius:50%;flex:none;display:grid;place-items:center;background:conic-gradient(var(--cyan) calc(var(--p)*1%),rgba(255,255,255,.07) 0)}
+.ring>div{width:58px;height:58px;border-radius:50%;background:var(--panel);display:grid;place-items:center;font-family:var(--display);font-size:16px}
+.hidden{display:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<nav class="nav hidden" id="nav"><div class="in" id="navIn"></div></nav>
+<div id="layer"></div>
+
+<script>
+/* ============================================================
+   RONDA — rotinas do restaurante, com jogo.
+   Protótipo: os dados ficam guardados no próprio aparelho.
+   Para vários celulares conversarem entre si, o próximo passo
+   é ligar a um servidor (ver LEIA-ME.md).
+   ============================================================ */
+const APP = 'Ronda';
+const KEY = 'ronda.v1';
+const TOL = 15;           // minutos de tolerância antes de contar como atraso
+const SOON = 30;          // minutos antes do horário em que a missão já pode ser feita
+const DIAS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const TIPOS = {
+  foto:{n:'Foto',e:'📸'}, sim:{n:'Sim / Não',e:'✅'}, numero:{n:'Número',e:'🔢'},
+  texto:{n:'Texto',e:'📝'}, checklist:{n:'Checklist',e:'☑️'}
+};
+const NIVEIS = [
+  [0,'Novato'],[120,'Aprendiz'],[300,'Braço Direito'],[600,'Gerente Raiz'],
+  [1000,'Mestre da Casa'],[1600,'Lenda do Salão'],[2500,'Dono do Pedaço']
+];
+
+/* ---------- utilidades ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2,'0');
+const dkey = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const toMin = hhmm => { const [h,m] = hhmm.split(':').map(Number); return h*60+m; };
+const fmtMin = m => `${pad(Math.floor(m/60))}:${pad(m%60)}`;
+const nowMin = () => { const d = new Date(); return d.getHours()*60 + d.getMinutes(); };
+const today = () => dkey(new Date());
+const daysAgo = n => { const d = new Date(); d.setDate(d.getDate()-n); return d; };
+const uid = () => Math.random().toString(36).slice(2,9);
+const atraso = m => m < 60 ? `${m} min` : `${Math.floor(m/60)}h${m%60 ? pad(m%60) : ''}`;
+
+/* ---------- dados ---------- */
+let S, ME, TAB, VIEW_USER;
+
+function seed(){
+  const users = [
+    {id:'u1', name:'Carla', turno:'Manhã', emoji:'🦊', color:'#2CC5D0'},
+    {id:'u2', name:'João',  turno:'Tarde', emoji:'🐻', color:'#FFA65C'}
+  ];
+  const T = (title,time,mgr,type,extra={}) => ({id:uid(),title,time,mgr,type,days:[0,1,2,3,4,5,6],pts:10,hint:'',active:true,...extra});
+  const tasks = [
+    T('Conferir o nível do gás','09:00','u1','numero',{unit:'%',min:25,hint:'Olhe o medidor do botijão/central e anote a porcentagem.'}),
+    T('Salão limpo e apresentável','10:45','u1','foto',{hint:'Foto do salão inteiro, mesas montadas.'}),
+    T('Abrir a porta do salão','11:00','u1','sim',{hint:'Porta aberta e placa virada para "Aberto"?'}),
+    T('Enviar malote','13:00','u1','foto',{days:[1,2,3,4,5],pts:20,hint:'Foto do malote lacrado com o comprovante.'}),
+    T('Preencher relatório do dia','14:00','u2','checklist',{items:['Vendas do almoço lançadas','Sangria do caixa feita','Quebras e perdas anotadas'],hint:'Marque tudo o que foi feito.'}),
+    T('Fechar o ponto','15:00','u2','sim',{hint:'Todos bateram o ponto de saída do turno?'}),
+    T('Feedback de troca de turno','17:00','u2','texto',{pts:15,hint:'O que o próximo turno precisa saber? Faltas, problemas, pendências.'})
+  ];
+  const s = {company:'Seu Restaurante', users, tasks, recs:[], reward:{text:'Folga extra no domingo 🏖️', goal:1200}, seeded:true};
+  // histórico de exemplo dos últimos dias, para o painel não nascer vazio
+  let r = 7;
+  const rnd = () => (r = (r*9301 + 49297) % 233280) / 233280;
+  const nm = nowMin();
+  for (let i = 9; i >= 0; i--){
+    const d = daysAgo(i), wd = d.getDay(), dk = dkey(d);
+    for (const t of tasks){
+      if (!t.days.includes(wd)) continue;
+      const tm = toMin(t.time);
+      if (i === 0 && tm > nm - 20) continue;            // hoje: só o que já passou
+      if (i === 0 && t.title.startsWith('Salão')) continue; // deixa uma atrasada para mostrar o alerta
+      const sorte = rnd();
+      if (sorte < (t.mgr === 'u2' ? .16 : .07)) continue;  // algumas esquecidas
+      const lateBy = t.mgr === 'u2' ? Math.round(rnd()*45 - 12) : Math.round(rnd()*25 - 15);
+      const at = Math.max(0, tm + lateBy);
+      const ok = lateBy <= TOL;
+      let proof = {type:t.type};
+      if (t.type === 'numero') proof.val = Math.round(15 + rnd()*80);
+      if (t.type === 'sim') proof.val = rnd() > .08 ? 'sim' : 'nao';
+      if (t.type === 'texto') proof.val = ['Tudo certo, sem pendências.','Faltou guardanapo no estoque.','Freezer 2 fazendo barulho, chamar técnico.','Movimento forte, repor refrigerante.'][Math.floor(rnd()*4)];
+      if (t.type === 'checklist') proof.val = t.items.slice();
+      if (t.type === 'foto') proof.val = null; // foto de exemplo
+      s.recs.push({id:uid(), t:t.id, d:dk, m:t.mgr, at, ok, pts: ok ? t.pts + 5 : Math.ceil(t.pts/2), proof, demo:true});
+    }
+  }
+  return s;
+}
+function load(){
+  try { S = JSON.parse(localStorage.getItem(KEY)); } catch(e){ S = null; }
+  if (!S || !S.users) S = seed();
+  try { ME = JSON.parse(localStorage.getItem(KEY+'.me')); } catch(e){ ME = null; }
+  if (ME && ME.role === 'ger' && !S.users.find(u => u.id === ME.id)) ME = null;
+}
+function save(){
+  try { localStorage.setItem(KEY, JSON.stringify(S)); }
+  catch(e){ toast('⚠️ Memória do aparelho cheia. Apague fotos antigas em Equipe › Zerar dados.'); }
+}
+function saveMe(){ try { localStorage.setItem(KEY+'.me', JSON.stringify(ME)); } catch(e){} }
+
+/* ---------- regras ---------- */
+const user = id => S.users.find(u => u.id === id);
+const task = id => S.tasks.find(t => t.id === id);
+const tasksOn = (dk, mgr) => {
+  const wd = new Date(dk + 'T12:00').getDay();
+  return S.tasks.filter(t => t.active && t.days.includes(wd) && (!mgr || t.mgr === mgr)).sort((a,b) => a.time.localeCompare(b.time));
+};
+const recOf = (tid, dk) => S.recs.find(r => r.t === tid && r.d === dk);
+
+function status(t, dk){
+  const r = recOf(t.id, dk);
+  if (r) return {s:'feito', r};
+  const td = today();
+  if (dk < td) return {s:'perdida'};
+  if (dk > td) return {s:'depois'};
+  const diff = nowMin() - toMin(t.time);
+  if (diff > TOL) return {s:'atrasada', late: diff};
+  if (diff >= -SOON) return {s:'agora', diff};
+  return {s:'depois'};
+}
+function problem(r, t){
+  if (!r || !t) return null;
+  if (t.type === 'sim' && r.proof.val === 'nao') return `respondeu NÃO${r.proof.note ? ': “' + r.proof.note + '”' : ''}`;
+  if (t.type === 'numero' && t.min != null && r.proof.val != null && Number(r.proof.val) < Number(t.min)) return `marcou ${r.proof.val}${t.unit||''} (abaixo do mínimo de ${t.min}${t.unit||''})`;
+  return null;
+}
+const xpOf = uid_ => S.recs.filter(r => r.m === uid_).reduce((a,r) => a + r.pts, 0);
+function level(xp){
+  let i = 0; while (i < NIVEIS.length-1 && xp >= NIVEIS[i+1][0]) i++;
+  const cur = NIVEIS[i][0], next = NIVEIS[i+1] ? NIVEIS[i+1][0] : cur + 1000;
+  return {n:i+1, name:NIVEIS[i][1], cur, next, pct: Math.min(100, (xp-cur)/(next-cur)*100)};
+}
+function dayDone(uid_, dk){ // true = todas feitas, false = faltou, null = sem tarefas
+  const ts = tasksOn(dk, uid_); if (!ts.length) return null;
+  return ts.every(t => recOf(t.id, dk));
+}
+function dayPerfect(uid_, dk){
+  const ts = tasksOn(dk, uid_); if (!ts.length) return false;
+  return ts.every(t => { const r = recOf(t.id, dk); return r && r.ok; });
+}
+function streak(uid_){
+  let n = 0;
+  if (dayDone(uid_, today()) === true) n++;
+  for (let i = 1; i < 120; i++){
+    const v = dayDone(uid_, dkey(daysAgo(i)));
+    if (v === null) continue; if (!v) break; n++;
+  }
+  return n;
+}
+function weekXP(uid_){
+  const from = dkey(daysAgo(6));
+  return S.recs.filter(r => r.m === uid_ && r.d >= from).reduce((a,r) => a + r.pts, 0);
+}
+function monthXP(uid_){
+  const m = today().slice(0,7);
+  return S.recs.filter(r => r.m === uid_ && r.d.startsWith(m)).reduce((a,r) => a + r.pts, 0);
+}
+function badges(uid_){
+  const rs = S.recs.filter(r => r.m === uid_);
+  const onTime = rs.filter(r => r.ok).length;
+  const fotos = rs.filter(r => r.proof.type === 'foto').length;
+  const cedo = rs.filter(r => r.at < 9*60).length;
+  let perfeitos = 0; for (let i = 0; i < 60; i++) if (dayPerfect(uid_, dkey(daysAgo(i)))) perfeitos++;
+  const st = streak(uid_), xp = xpOf(uid_);
+  const pr = (v, goal) => ({ok: v >= goal, p: `${Math.min(v,goal)}/${goal}`});
+  return [
+    {e:'🎯', n:'Primeira missão', d:'Concluiu a 1ª tarefa', ...pr(rs.length,1)},
+    {e:'⏱️', n:'Pontual', d:'10 tarefas no horário', ...pr(onTime,10)},
+    {e:'🕰️', n:'Relógio suíço', d:'50 tarefas no horário', ...pr(onTime,50)},
+    {e:'💯', n:'Dia perfeito', d:'Tudo no horário num dia', ...pr(perfeitos,1)},
+    {e:'🔥', n:'Pegando fogo', d:'3 dias seguidos completos', ...pr(st,3)},
+    {e:'🏆', n:'Semana de ouro', d:'7 dias seguidos completos', ...pr(st,7)},
+    {e:'📸', n:'Fotógrafo', d:'10 comprovações com foto', ...pr(fotos,10)},
+    {e:'🌅', n:'Madrugador', d:'5 tarefas antes das 9h', ...pr(cedo,5)},
+    {e:'👑', n:'Lenda', d:'Chegou a 1.600 XP', ...pr(xp,1600)}
+  ];
+}
+
+/* ---------- interface: base ---------- */
+function render(){
+  const app = $('#app');
+  if (!ME){ $('#nav').classList.add('hidden'); app.innerHTML = viewPick(); return; }
+  const tabs = ME.role === 'dono'
+    ? [['hoje','📡','Agora'],['rotinas','🗓️','Rotinas'],['equipe','👥','Equipe'],['insights','💡','Insights']]
+    : [['hoje','🎯','Missões'],['conquistas','🏅','Conquistas'],['ranking','🏆','Ranking']];
+  if (!tabs.find(t => t[0] === TAB)) TAB = 'hoje';
+  const lateCount = ME.role === 'dono'
+    ? tasksOn(today()).filter(t => status(t, today()).s === 'atrasada').length
+    : tasksOn(today(), ME.id).filter(t => ['atrasada','agora'].includes(status(t, today()).s)).length;
+  $('#navIn').innerHTML = tabs.map(([k,i,n]) =>
+    `<button data-act="tab" data-v="${k}" class="${TAB===k?'on':''}" aria-label="${n}"><span class="i">${i}</span>${n}${k==='hoje'&&lateCount?`<span class="dot">${lateCount}</span>`:''}</button>`).join('');
+  $('#nav').classList.remove('hidden');
+  const v = ME.role === 'dono'
+    ? {hoje:ownerToday, rotinas:ownerTasks, equipe:ownerTeam, insights:ownerInsights}[TAB]
+    : {hoje:mgrToday, conquistas:mgrBadges, ranking:mgrRanking}[TAB];
+  app.innerHTML = header() + v();
+}
+function header(){
+  const who = ME.role === 'dono' ? '👑 Dono' : `${user(ME.id).emoji} ${esc(user(ME.id).name)}`;
+  return `<div class="top"><div class="brand"><img src="icon-192.png" alt=""><div><b>${APP.toUpperCase()}</b><small>${esc(S.company)}</small></div></div>
+  <div class="row"><button class="chip-btn" data-act="notif" aria-label="Notificações">${notifIcon()}</button><button class="chip-btn" data-act="logout">${who} ⇄</button></div></div>`;
+}
+function notifIcon(){
+  if (!('Notification' in window)) return '🔕';
+  return Notification.permission === 'granted' ? '🔔' : '🔕';
+}
+function viewPick(){
+  return `<div style="text-align:center;margin-top:8vh">
+    <img src="icon-192.png" alt="" style="width:84px;height:84px;border-radius:22px;box-shadow:0 0 0 1px var(--line-hi),0 0 40px -6px rgba(44,197,208,.7)">
+    <h1 style="font-family:var(--display);letter-spacing:.14em;color:var(--cyan);font-size:34px;margin-top:14px">${APP.toUpperCase()}</h1>
+    <p class="muted" style="margin-top:6px">As rotinas do restaurante viram missões.<br>O gerente joga, o dono acompanha.</p></div>
+    <div class="pick">
+      <button data-act="login" data-v="dono"><span class="avatar" style="--c:var(--gold)">👑</span><span><b>Sou o dono / gestor</b><span class="muted small">Crio as rotinas e acompanho tudo</span></span></button>
+      ${S.users.map(u => `<button data-act="login" data-v="${u.id}"><span class="avatar" style="--c:${u.color}">${u.emoji}</span><span><b>${esc(u.name)}</b><span class="muted small">Gerente · turno da ${esc(u.turno||'')}</span></span></button>`).join('')}
+    </div>
+    <p class="muted small" style="text-align:center;margin-top:20px">Versão de demonstração: os dados ficam neste aparelho.</p>`;
+}
+
+/* ---------- gerente ---------- */
+function mgrToday(){
+  const u = user(ME.id), dk = today(), ts = tasksOn(dk, u.id);
+  const xp = xpOf(u.id), lv = level(xp), st = streak(u.id);
+  const doneN = ts.filter(t => recOf(t.id, dk)).length;
+  const ptsHoje = S.recs.filter(r => r.m === u.id && r.d === dk).reduce((a,r) => a + r.pts, 0);
+  const pct = ts.length ? Math.round(doneN/ts.length*100) : 0;
+  const pend = ts.map(t => ({t, st:status(t, dk)})).filter(x => x.st.s !== 'feito');
+  const foco = pend.find(x => x.st.s === 'atrasada') || pend.find(x => x.st.s === 'agora') || pend[0];
+  let h = `<div class="card glow hero">
+    <div class="row"><div class="avatar" style="--c:${u.color}">${u.emoji}</div>
+      <div style="flex:1"><div class="lvl">Nível ${lv.n} · ${lv.name}</div><b style="font-size:19px">Bora, ${esc(u.name)}!</b>
+      <div class="bar" style="margin-top:6px"><i style="width:${lv.pct}%"></i></div>
+      <div class="small muted mono" style="margin-top:3px">${xp} / ${lv.next} XP</div></div></div>
+    <div class="grid3" style="margin-top:14px">
+      <div class="stat"><b class="flame">🔥 ${st}</b><span>dias seguidos</span></div>
+      <div class="stat"><b style="color:var(--gold)">+${ptsHoje}</b><span>XP hoje</span></div>
+      <div class="stat"><b>${doneN}/${ts.length}</b><span>missões</span></div>
+    </div></div>`;
+  if (foco){
+    const late = foco.st.s === 'atrasada';
+    const ty = TIPOS[foco.t.type];
+    h += `<div class="card now ${late?'late':''}">
+      <div class="row between"><span class="tag ${late?'red':''}">${late ? '⚠️ Atrasada ' + atraso(foco.st.late) : foco.st.s === 'agora' ? '⚡ Missão da vez' : '⏭️ Próxima missão'}</span>
+      <span class="mono" style="font-size:22px;font-weight:700">${foco.t.time}</span></div>
+      <h3>${esc(foco.t.title)}</h3>
+      <p class="muted small">${ty.e} Comprovar com ${ty.n.toLowerCase()} · <span style="color:var(--gold)">+${foco.t.pts + 5} XP no horário</span></p>
+      ${foco.t.hint ? `<p class="small" style="margin-top:8px">${esc(foco.t.hint)}</p>` : ''}
+      <button class="btn ${late?'red':''}" style="margin-top:14px" data-act="do" data-v="${foco.t.id}">${late ? 'Resolver agora' : 'Concluir missão'}</button></div>`;
+  } else if (ts.length){
+    h += `<div class="card now" style="text-align:center"><div style="font-size:46px">🏁</div><h3>Missões do dia completas!</h3><p class="muted">Sequência garantida. Amanhã tem mais.</p></div>`;
+  }
+  h += `<div class="card"><div class="row between"><h2 style="margin:0">Missões de hoje</h2><div class="ring" style="--p:${pct}"><div>${pct}%</div></div></div>
+    ${ts.length ? `<ul class="tl" style="margin-top:6px">${ts.map(t => tlItem(t, dk, true)).join('')}</ul>` : '<p class="empty">Nenhuma rotina para você hoje. 😎</p>'}</div>`;
+  const rw = S.reward;
+  if (rw && rw.text){
+    const mx = monthXP(u.id);
+    h += `<div class="card"><div class="row between"><b>🎁 Prêmio do mês</b><span class="tag gold">${mx}/${rw.goal} XP</span></div>
+      <p style="margin:6px 0 10px">${esc(rw.text)}</p><div class="bar gold"><i style="width:${Math.min(100, mx/rw.goal*100)}%"></i></div>
+      <p class="small muted" style="margin-top:6px">${mx >= rw.goal ? 'Meta batida! Fale com o dono. 🎉' : `Faltam ${rw.goal - mx} XP este mês.`}</p></div>`;
+  }
+  return h;
+}
+function tlItem(t, dk, mine){
+  const st = status(t, dk), u = user(t.mgr);
+  let ico = TIPOS[t.type].e, cls = '', sub = '', right = '';
+  if (st.s === 'feito'){
+    const p = problem(st.r, t);
+    cls = p ? 'late' : 'done'; ico = p ? '⚠️' : '✓';
+    sub = `Feito às ${fmtMin(st.r.at)} · ${st.r.ok ? 'no horário' : 'com atraso'} · +${st.r.pts} XP${p ? ' · ' + esc(p) : ''}`;
+  } else if (st.s === 'atrasada'){ cls = 'late'; ico = '!'; sub = `Atrasada ${atraso(st.late)}`; }
+  else if (st.s === 'perdida'){ cls = 'late'; ico = '✕'; sub = 'Não foi feita'; }
+  else if (st.s === 'agora'){ cls = 'now'; ico = '⚡'; sub = 'Pode fazer agora'; }
+  else sub = `${TIPOS[t.type].n} · +${t.pts + 5} XP`;
+  if (!mine) sub = `${u ? u.emoji + ' ' + esc(u.name) + ' · ' : ''}${sub}`;
+  if (mine && ['atrasada','agora','depois'].includes(st.s) && dk === today()) right = `<button class="go" data-act="do" data-v="${t.id}">Fazer</button>`;
+  const click = st.s === 'feito' ? `class="clickable" data-act="proof" data-v="${st.r.id}"` : '';
+  return `<li ${click}><span class="hr">${t.time}</span><span class="ico ${cls}">${ico}</span><span class="tt"><b>${esc(t.title)}</b><span>${sub}</span></span>${right}</li>`;
+}
+function mgrBadges(){
+  const bs = badges(ME.id), n = bs.filter(b => b.ok).length;
+  return `<h2>Conquistas · ${n}/${bs.length}</h2><div class="badges">${bs.map(b =>
+    `<div class="badge ${b.ok?'':'off'}"><span class="e">${b.e}</span><b>${b.n}</b><span>${b.d}</span><span class="mono" style="color:var(--cyan)">${b.ok ? 'Desbloqueada' : b.p}</span></div>`).join('')}</div>
+    <h2>Como ganhar XP</h2><div class="card small">
+    <p>⏱️ Missão no horário (até ${TOL} min depois): <b style="color:var(--gold)">pontos da missão + 5 de bônus</b></p>
+    <p style="margin-top:6px">🐢 Com atraso: <b>metade dos pontos</b></p>
+    <p style="margin-top:6px">🔥 Feche todas as missões do dia para manter a sequência</p>
+    <p style="margin-top:6px">⚡ Pode adiantar a missão a partir de ${SOON} min antes do horário</p></div>`;
+}
+function rankingList(fn, label){
+  const list = S.users.map(u => ({u, v:fn(u.id)})).sort((a,b) => b.v - a.v);
+  return `<ul class="rank">${list.map((x,i) => `<li><span class="pos">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</span><span class="avatar" style="--c:${x.u.color};width:40px;height:40px;font-size:20px;border-radius:12px">${x.u.emoji}</span>
+    <span style="flex:1"><b>${esc(x.u.name)}</b><span class="small muted" style="display:block">Nível ${level(xpOf(x.u.id)).n} · 🔥 ${streak(x.u.id)}</span></span><b class="mono" style="color:var(--gold)">${x.v} ${label}</b></li>`).join('')}</ul>`;
+}
+function mgrRanking(){
+  return `<h2>Ranking da semana</h2><div class="card">${rankingList(weekXP,'XP')}</div>
+    <h2>Ranking do mês</h2><div class="card">${rankingList(monthXP,'XP')}</div>
+    ${S.reward && S.reward.text ? `<div class="card"><b>🎁 Prêmio do mês:</b> ${esc(S.reward.text)}<p class="small muted" style="margin-top:4px">Para quem passar de ${S.reward.goal} XP no mês.</p></div>` : ''}`;
+}
+
+/* ---------- dono ---------- */
+function alertsToday(){
+  const dk = today(), out = [];
+  for (const t of tasksOn(dk)){
+    const st = status(t, dk), u = user(t.mgr), nome = u ? u.name : 'Ninguém';
+    if (st.s === 'atrasada') out.push({k:'red', e:'⏰', h:`<b>${esc(nome)}</b> ainda não fez “${esc(t.title)}”`, s:`Era às ${t.time} · atraso de ${atraso(st.late)}`});
+    if (st.s === 'feito'){ const p = problem(st.r, t); if (p) out.push({k:'warn', e:'⚠️', h:`“${esc(t.title)}”: ${esc(nome)} ${esc(p)}`, s:`Às ${fmtMin(st.r.at)}`, id:st.r.id}); }
+  }
+  return out;
+}
+function ownerToday(){
+  const dk = today(), ts = tasksOn(dk);
+  const done = ts.filter(t => recOf(t.id, dk)), ok = done.filter(t => recOf(t.id, dk).ok);
+  const al = alertsToday();
+  const pct = ts.length ? Math.round(done.length/ts.length*100) : 0;
+  const d = new Date();
+  let h = `<p class="muted small">${(x => x[0].toUpperCase() + x.slice(1))(d.toLocaleDateString('pt-BR',{weekday:'long', day:'numeric', month:'long'}))}</p>
+    <div class="card glow"><div class="row"><div class="ring" style="--p:${pct}"><div>${pct}%</div></div>
+    <div style="flex:1"><b style="font-size:18px">${done.length} de ${ts.length} rotinas feitas</b>
+    <p class="small muted">${ok.length} no horário · ${al.filter(a=>a.k==='red').length} atrasada(s) · ${al.filter(a=>a.k==='warn').length} problema(s)</p></div></div></div>
+    <h2>Precisa da sua atenção</h2>`;
+  h += al.length ? al.map(a => `<div class="alert ${a.k==='warn'?'warn':''}" ${a.id?`data-act="proof" data-v="${a.id}" style="cursor:pointer"`:''}><span class="em">${a.e}</span><div><div>${a.h}</div><div class="small muted">${a.s}</div></div></div>`).join('')
+    : `<div class="alert ok"><span class="em">😌</span><div><b>Tudo em dia.</b><div class="small muted">Nenhuma rotina atrasada e nenhum problema relatado.</div></div></div>`;
+  for (const u of S.users){
+    const mine = tasksOn(dk, u.id); if (!mine.length) continue;
+    const dn = mine.filter(t => recOf(t.id, dk)).length;
+    h += `<h2>${u.emoji} ${esc(u.name)} <span class="muted small" style="letter-spacing:0;text-transform:none">· ${dn}/${mine.length}</span></h2>
+      <div class="card"><div class="bar" style="margin-bottom:6px"><i style="width:${dn/mine.length*100}%"></i></div><ul class="tl">${mine.map(t => tlItem(t, dk, false)).join('')}</ul></div>`;
+  }
+  const semDono = ts.filter(t => !user(t.mgr));
+  if (semDono.length) h += `<div class="alert warn"><span class="em">🙋</span><div>${semDono.length} rotina(s) sem gerente responsável. Ajuste em Rotinas.</div></div>`;
+  return h;
+}
+function ownerTasks(){
+  const byUser = S.users.map(u => ({u, ts:S.tasks.filter(t => t.mgr === u.id).sort((a,b) => a.time.localeCompare(b.time))}));
+  const orf = S.tasks.filter(t => !user(t.mgr));
+  let h = `<div class="row between" style="margin-top:8px"><h2 style="margin:0">Rotinas</h2><button class="btn sm" data-act="edit" data-v="">+ Nova rotina</button></div>
+    <p class="small muted" style="margin:6px 0 12px">Toque numa rotina para editar. Cada uma vira uma missão no celular do gerente, com lembrete na hora.</p>`;
+  const block = (title, ts) => `<h2>${title}</h2><div class="card">${ts.length ? `<ul class="tl">${ts.map(t =>
+    `<li class="clickable" data-act="edit" data-v="${t.id}" style="${t.active?'':'opacity:.45'}"><span class="hr">${t.time}</span><span class="ico">${TIPOS[t.type].e}</span>
+    <span class="tt"><b>${esc(t.title)}</b><span>${t.days.length===7?'Todo dia':t.days.map(x=>DIAS[x]).join(' ')} · ${TIPOS[t.type].n} · ${t.pts} pts${t.active?'':' · pausada'}</span></span><span class="muted">›</span></li>`).join('')}</ul>` : '<p class="empty small">Nenhuma rotina ainda.</p>'}</div>`;
+  for (const x of byUser) h += block(`${x.u.emoji} ${esc(x.u.name)}`, x.ts);
+  if (orf.length) h += block('Sem responsável', orf);
+  return h;
+}
+function ownerTeam(){
+  let h = `<div class="row between" style="margin-top:8px"><h2 style="margin:0">Equipe</h2><button class="btn sm" data-act="addUser">+ Gerente</button></div><div style="margin-top:12px"></div>`;
+  for (const u of S.users){
+    const xp = xpOf(u.id), lv = level(xp), bs = badges(u.id).filter(b => b.ok);
+    h += `<div class="card"><div class="row"><div class="avatar" style="--c:${u.color}">${u.emoji}</div>
+      <div style="flex:1"><b>${esc(u.name)}</b> <span class="small muted">· turno da ${esc(u.turno||'')}</span><div class="lvl">Nível ${lv.n} · ${lv.name} · ${xp} XP</div></div>
+      <button class="chip-btn" data-act="delUser" data-v="${u.id}" aria-label="Remover ${esc(u.name)}">🗑️</button></div>
+      <div class="row small" style="margin-top:10px;gap:14px;flex-wrap:wrap"><span class="flame">🔥 ${streak(u.id)} dias</span><span>⏱️ ${pontual(u.id,7)}% no horário (7 dias)</span></div>
+      <div style="margin-top:8px;font-size:22px;letter-spacing:4px">${bs.map(b => `<span title="${esc(b.n)}">${b.e}</span>`).join('') || '<span class="small muted" style="letter-spacing:0">Sem conquistas ainda</span>'}</div></div>`;
+  }
+  h += `<h2>Ranking da semana</h2><div class="card">${rankingList(weekXP,'XP')}</div>
+    <h2>🎁 Prêmio do mês</h2><div class="card"><p class="small muted">Um prêmio real motiva muito mais que pontos. Ex.: folga extra, vale-jantar, bônus em dinheiro.</p>
+    <label class="f" for="rwText">Prêmio</label><input class="in-f" id="rwText" value="${esc(S.reward.text)}">
+    <label class="f" for="rwGoal">Meta de XP no mês</label><input class="in-f" id="rwGoal" type="number" inputmode="numeric" value="${S.reward.goal}">
+    <button class="btn" style="margin-top:12px" data-act="saveReward">Salvar prêmio</button></div>
+    <h2>Restaurante</h2><div class="card"><label class="f" for="coName" style="margin-top:0">Nome que aparece no app</label><input class="in-f" id="coName" value="${esc(S.company)}">
+    <button class="btn ghost" style="margin-top:12px" data-act="saveCo">Salvar nome</button>
+    <button class="btn ghost" style="margin-top:10px;color:var(--red)" data-act="reset">Zerar dados (recomeçar do zero)</button>
+    <button class="btn ghost" style="margin-top:10px" data-act="demo">Recarregar exemplo de demonstração</button></div>`;
+  return h;
+}
+function pontual(uid_, n){
+  const from = dkey(daysAgo(n-1));
+  let tot = 0, ok = 0;
+  for (let i = 0; i < n; i++){
+    const dk = dkey(daysAgo(i));
+    for (const t of tasksOn(dk, uid_)){ const st = status(t, dk); if (st.s === 'depois' || st.s === 'agora') continue; tot++; if (st.s === 'feito' && st.r.ok) ok++; }
+  }
+  return tot ? Math.round(ok/tot*100) : 100;
+}
+function ownerInsights(){
+  // últimos 7 dias
+  const days = [];
+  for (let i = 6; i >= 0; i--){
+    const d = daysAgo(i), dk = dkey(d); let tot = 0, ok = 0, feitas = 0;
+    for (const t of tasksOn(dk)){ const st = status(t, dk); if (st.s === 'depois' || st.s === 'agora') continue; tot++; if (st.s === 'feito'){ feitas++; if (st.r.ok) ok++; } }
+    days.push({lab: i === 0 ? 'Hoje' : DIAS[d.getDay()], pct: tot ? Math.round(ok/tot*100) : null, tot, feitas, ok});
+  }
+  const sum = days.reduce((a,x) => ({tot:a.tot+x.tot, ok:a.ok+x.ok, feitas:a.feitas+x.feitas}), {tot:0,ok:0,feitas:0});
+  // por tarefa
+  const porTarefa = S.tasks.map(t => {
+    let tot = 0, late = 0, miss = 0, lateMin = 0;
+    for (let i = 0; i < 14; i++){
+      const dk = dkey(daysAgo(i)); if (!tasksOn(dk).includes(t)) continue;
+      const st = status(t, dk); if (st.s === 'depois' || st.s === 'agora') continue;
+      tot++; if (st.s !== 'feito'){ miss++; continue; }
+      const diff = st.r.at - toMin(t.time); if (!st.r.ok){ late++; lateMin += diff; }
+    }
+    return {t, tot, late, miss, bad: tot ? (late+miss)/tot : 0, media: late ? Math.round(lateMin/late) : 0};
+  }).filter(x => x.tot).sort((a,b) => b.bad - a.bad);
+  const pior = porTarefa[0];
+  const probs = S.recs.filter(r => r.d >= dkey(daysAgo(13)) && problem(r, task(r.t)));
+  const ger = S.users.map(u => ({u, p:pontual(u.id,7), w:weekXP(u.id), s:streak(u.id)})).sort((a,b) => b.p - a.p);
+  const valid = days.filter(x => x.pct !== null);
+  const piorDia = valid.length ? valid.reduce((a,b) => b.pct < a.pct ? b : a) : null;
+
+  let h = `<h2>Últimos 7 dias</h2><div class="card"><div class="row between"><b>% das rotinas feitas no horário</b><span class="tag">${sum.tot ? Math.round(sum.ok/sum.tot*100) : 0}% média</span></div>
+    <div class="chart">${days.map(x => `<div class="col"><em>${x.pct===null?'–':x.pct+'%'}</em><i class="${x.pct===null?'':x.pct<60?'low':x.pct<85?'mid':''}" style="height:${x.pct||0}%"></i><small>${x.lab}</small></div>`).join('')}</div>
+    <p class="small muted" style="margin-top:8px">${sum.feitas} de ${sum.tot} rotinas feitas · ${sum.tot - sum.feitas} esquecida(s)</p></div>
+    <h2>O que os números dizem</h2>`;
+  const tips = [];
+  if (pior && pior.bad > 0) tips.push(['🐢', `<b>“${esc(pior.t.title)}”</b> é a rotina mais problemática: atrasou ou ficou sem fazer em ${Math.round(pior.bad*100)}% das vezes nas últimas 2 semanas${pior.media ? ` (atraso médio de ${pior.media} min)` : ''}.`, `Sugestão: converse com ${esc(user(pior.t.mgr)?.name || 'o responsável')}, ou mude o horário para algo mais realista.`]);
+  if (ger.length > 1) tips.push(['🏅', `<b>${esc(ger[0].u.name)}</b> é quem mais cumpre no horário: ${ger[0].p}% na semana.`, ger[ger.length-1].p < ger[0].p ? `${esc(ger[ger.length-1].u.name)} está com ${ger[ger.length-1].p}%. Vale um elogio público pro primeiro e uma conversa com o segundo.` : 'Equipe equilibrada. Reconheça em público!']);
+  if (piorDia && piorDia.pct < 85) tips.push(['📉', `O dia mais fraco foi <b>${piorDia.lab}</b>, com ${piorDia.pct}% no horário.`, 'Veja se faltou gente, se o movimento foi atípico ou se a rotina está pesada nesse dia.']);
+  const gas = S.tasks.find(t => t.type === 'numero' && t.min != null);
+  if (gas){
+    const rs = S.recs.filter(r => r.t === gas.id && r.proof.val != null).sort((a,b) => a.d.localeCompare(b.d));
+    const last = rs[rs.length-1];
+    if (last) tips.push([Number(last.proof.val) < gas.min ? '🔴' : '🟢', `Última leitura de “${esc(gas.title)}”: <b>${last.proof.val}${gas.unit||''}</b> (${new Date(last.d+'T12:00').toLocaleDateString('pt-BR')}).`, Number(last.proof.val) < gas.min ? 'Abaixo do mínimo: providencie a reposição.' : 'Dentro do normal.']);
+  }
+  if (probs.length) tips.push(['⚠️', `<b>${probs.length} problema(s)</b> relatado(s) nas últimas 2 semanas (respostas “não” ou valores fora do normal).`, 'Toque nos alertas da aba Agora para ver os detalhes e as fotos.']);
+  const textos = S.recs.filter(r => r.proof.type === 'texto' && r.proof.val).sort((a,b) => (b.d + pad(b.at)).localeCompare(a.d + pad(a.at))).slice(0,3);
+  h += tips.length ? tips.map(([e,a,b]) => `<div class="card row" style="align-items:flex-start"><span style="font-size:24px">${e}</span><div><p>${a}</p><p class="small muted" style="margin-top:4px">${b}</p></div></div>`).join('') : '<p class="empty">Ainda não há dados suficientes. Volte daqui a alguns dias.</p>';
+  h += `<h2>Pontualidade por gerente (7 dias)</h2><div class="card">${ger.map(g => `<div style="margin:6px 0 12px"><div class="row between small"><span>${g.u.emoji} ${esc(g.u.name)}</span><b class="mono">${g.p}%</b></div><div class="bar"><i style="width:${g.p}%"></i></div></div>`).join('')}</div>`;
+  if (textos.length) h += `<h2>Últimos recados de turno</h2>${textos.map(r => `<div class="card small" data-act="proof" data-v="${r.id}" style="cursor:pointer"><span class="muted">${user(r.m)?.emoji||''} ${esc(user(r.m)?.name||'')} · ${new Date(r.d+'T12:00').toLocaleDateString('pt-BR')} ${fmtMin(r.at)}</span><p style="margin-top:4px">“${esc(r.proof.val)}”</p></div>`).join('')}`;
+  return h;
+}
+
+/* ---------- janelas ---------- */
+function sheet(html){
+  $('#layer').innerHTML = `<div class="sheet-bg" data-act="closeBg"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`;
+  const f = $('#layer .sheet input, #layer .sheet textarea'); if (f && f.type !== 'file') setTimeout(() => f.focus(), 250);
+}
+const closeSheet = () => { $('#layer').innerHTML = ''; };
+
+let DRAFT = null;
+function openDo(tid){
+  const t = task(tid); if (!t) return;
+  DRAFT = {t:tid, val: t.type === 'checklist' ? [] : null, note:''};
+  let body = '';
+  if (t.type === 'foto') body = `<input type="file" id="ph" accept="image/*" capture="environment" class="hidden"><label for="ph" class="photo-drop" id="phBox"><span style="font-size:38px">📸</span>Tirar foto</label>`;
+  if (t.type === 'sim') body = `<div class="yn"><button class="y" data-act="yn" data-v="sim">👍 Sim</button><button class="n" data-act="yn" data-v="nao">👎 Não</button></div>
+    <div id="noteBox" class="hidden"><label class="f" for="note">O que aconteceu? (o dono vai ver)</label><textarea class="in-f" id="note"></textarea></div>`;
+  if (t.type === 'numero') body = `<label class="f" for="num">Valor${t.unit ? ' (' + esc(t.unit) + ')' : ''}</label><input class="in-f mono" style="font-size:28px;text-align:center" id="num" type="number" inputmode="decimal">`;
+  if (t.type === 'texto') body = `<label class="f" for="txt">Escreva aqui</label><textarea class="in-f" id="txt"></textarea>`;
+  if (t.type === 'checklist') body = (t.items||[]).map((it,i) => `<label class="check"><input type="checkbox" data-i="${i}" class="ck"><span>${esc(it)}</span></label>`).join('');
+  const st = status(t, today());
+  sheet(`<div class="row between"><span class="tag ${st.s==='atrasada'?'red':''}">${t.time} · ${TIPOS[t.type].e} ${TIPOS[t.type].n}</span><button class="chip-btn" data-act="close" aria-label="Fechar">✕</button></div>
+    <h3 style="margin-top:12px">${esc(t.title)}</h3>${t.hint ? `<p class="muted small">${esc(t.hint)}</p>` : ''}
+    ${body}<button class="btn" style="margin-top:18px" data-act="finish">Confirmar e ganhar XP</button>`);
+  if (t.type === 'foto') $('#ph').addEventListener('change', onPhoto);
+}
+function onPhoto(e){
+  const f = e.target.files[0]; if (!f) return;
+  const img = new Image(), url = URL.createObjectURL(f);
+  img.onload = () => {
+    const max = 720, k = Math.min(1, max / Math.max(img.width, img.height));
+    const c = document.createElement('canvas'); c.width = Math.round(img.width*k); c.height = Math.round(img.height*k);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    DRAFT.val = c.toDataURL('image/jpeg', .62);
+    URL.revokeObjectURL(url);
+    $('#phBox').innerHTML = `<img src="${DRAFT.val}" alt="Foto tirada"><span class="small">Toque para tirar outra</span>`;
+  };
+  img.src = url;
+}
+function finish(){
+  const t = task(DRAFT.t); if (!t) return;
+  let val = DRAFT.val, note = '';
+  if (t.type === 'foto' && !val) return toast('📸 Tire a foto para comprovar.');
+  if (t.type === 'sim'){ if (!val) return toast('Responda sim ou não.'); note = ($('#note')?.value || '').trim(); if (val === 'nao' && !note) return toast('Conte rapidinho o que aconteceu.'); }
+  if (t.type === 'numero'){ val = $('#num').value; if (val === '') return toast('Digite o valor.'); val = Number(val); }
+  if (t.type === 'texto'){ val = $('#txt').value.trim(); if (val.length < 3) return toast('Escreva um pouco mais.'); }
+  if (t.type === 'checklist'){ const cks = [...document.querySelectorAll('.ck')]; if (cks.some(c => !c.checked)) return toast('Marque todos os itens para concluir.'); val = t.items.slice(); }
+  const dk = today(); if (recOf(t.id, dk)){ closeSheet(); return; }
+  const at = nowMin(), diff = at - toMin(t.time), ok = diff <= TOL;
+  const uidr = ME.role === 'ger' ? ME.id : t.mgr;
+  // combo: missões seguidas no horário hoje
+  const hojeOk = tasksOn(dk, uidr).filter(x => x.id !== t.id && x.time < t.time);
+  let combo = 0; for (let i = hojeOk.length-1; i >= 0; i--){ const r = recOf(hojeOk[i].id, dk); if (r && r.ok) combo++; else break; }
+  const bonusCombo = ok ? Math.min(combo, 5) : 0;
+  const pts = (ok ? t.pts + 5 : Math.ceil(t.pts/2)) + bonusCombo;
+  const before = {lv: level(xpOf(uidr)).n, bs: badges(uidr).filter(b => b.ok).map(b => b.n)};
+  const rec = {id:uid(), t:t.id, d:dk, m:uidr, at, ok, pts, proof:{type:t.type, val, note}};
+  S.recs.push(rec); save(); closeSheet();
+  const lvNow = level(xpOf(uidr)), newB = badges(uidr).filter(b => b.ok && !before.bs.includes(b.n));
+  const allDone = tasksOn(dk, uidr).every(x => recOf(x.id, dk));
+  const q = [];
+  q.push({em: ok ? '⚡' : '🐢', big:`+${pts} XP`, h: ok ? 'Missão cumprida no horário!' : 'Feito, mas com atraso', s: ok ? (bonusCombo ? `Combo x${combo+1}! +${bonusCombo} de bônus` : 'Bônus de pontualidade garantido') : 'Atrasos valem metade dos pontos. Amanhã você pega!'});
+  if (problem(rec, t)) q.push({em:'📣', h:'Dono avisado', s:'Registramos o problema. Ele vai aparecer no painel do dono.'});
+  if (allDone) q.push({em:'🏁', h:'Todas as missões do dia!', s:`Sequência: 🔥 ${streak(uidr)} dia(s)`});
+  if (lvNow.n > before.lv) q.push({em:'🆙', big:`Nível ${lvNow.n}`, h:lvNow.name, s:'Você subiu de nível!'});
+  for (const b of newB) q.push({em:b.e, h:'Conquista: ' + b.n, s:b.d});
+  party(q); render();
+}
+function party(queue){
+  if (!queue.length) return;
+  const x = queue.shift();
+  confetti(x.big ? 60 : 30);
+  if (navigator.vibrate) try { navigator.vibrate([40,40,80]); } catch(e){}
+  $('#layer').innerHTML = `<div class="party" data-act="partyNext"><div class="box"><div class="em">${x.em}</div>${x.big ? `<div class="big">${x.big}</div>` : ''}<h3>${x.h}</h3><p class="muted">${x.s}</p><p class="small muted" style="margin-top:22px">toque para continuar</p></div></div>`;
+  PARTY = queue;
+}
+let PARTY = [];
+function confetti(n){
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cs = ['#2CC5D0','#7DF3F8','#FFD27A','#5BE49B','#FF6B7A','#FFA65C'];
+  for (let i = 0; i < n; i++){
+    const c = document.createElement('i'); c.className = 'confetti';
+    c.style.left = Math.random()*100 + 'vw'; c.style.background = cs[i % cs.length];
+    c.style.animationDuration = (1.6 + Math.random()*1.6) + 's'; c.style.animationDelay = Math.random()*.3 + 's';
+    c.style.borderRadius = Math.random() > .5 ? '50%' : '2px';
+    document.body.appendChild(c); setTimeout(() => c.remove(), 3600);
+  }
+}
+function openProof(rid){
+  const r = S.recs.find(x => x.id === rid); if (!r) return;
+  const t = task(r.t), u = user(r.m), p = problem(r, t);
+  let body = '';
+  const v = r.proof.val;
+  if (r.proof.type === 'foto') body = v ? `<img class="proof-img" src="${v}" alt="Foto enviada">` : `<div class="ph">📷 Foto do exemplo de demonstração</div>`;
+  if (r.proof.type === 'sim') body = `<p style="font-size:26px;font-weight:800;margin-top:12px;color:${v==='sim'?'var(--green)':'var(--red)'}">${v==='sim'?'👍 Sim':'👎 Não'}</p>${r.proof.note ? `<p class="card small" style="margin-top:8px">“${esc(r.proof.note)}”</p>` : ''}`;
+  if (r.proof.type === 'numero') body = `<p class="mono" style="font-size:34px;font-weight:700;margin-top:12px">${esc(v)}${esc(t?.unit||'')}</p>`;
+  if (r.proof.type === 'texto') body = `<p class="card" style="margin-top:12px">“${esc(v)}”</p>`;
+  if (r.proof.type === 'checklist') body = `<ul style="margin-top:12px;padding-left:0;list-style:none">${(v||[]).map(x => `<li>✅ ${esc(x)}</li>`).join('')}</ul>`;
+  sheet(`<div class="row between"><span class="tag ${r.ok?'green':'red'}">${r.ok?'No horário':'Com atraso'} · +${r.pts} XP</span><button class="chip-btn" data-act="close" aria-label="Fechar">✕</button></div>
+    <h3 style="margin-top:12px">${esc(t?.title || 'Rotina apagada')}</h3>
+    <p class="muted small">${u ? u.emoji + ' ' + esc(u.name) + ' · ' : ''}${new Date(r.d+'T12:00').toLocaleDateString('pt-BR')} às ${fmtMin(r.at)} (previsto ${t?.time||'–'})</p>
+    ${p ? `<div class="alert warn" style="margin-top:10px"><span class="em">⚠️</span><div>${esc(p)}</div></div>` : ''}${body}`);
+}
+function openEdit(tid){
+  const t = tid ? task(tid) : {id:'', title:'', time:'09:00', mgr:S.users[0]?.id || '', type:'sim', days:[0,1,2,3,4,5,6], pts:10, hint:'', active:true, items:[], unit:'', min:null};
+  sheet(`<div class="row between"><h3>${tid ? 'Editar rotina' : 'Nova rotina'}</h3><button class="chip-btn" data-act="close" aria-label="Fechar">✕</button></div>
+    <label class="f" for="eTitle">O que precisa ser feito</label><input class="in-f" id="eTitle" value="${esc(t.title)}" placeholder="Ex.: Conferir o nível do gás">
+    <div class="grid2"><div><label class="f" for="eTime">Horário</label><input class="in-f" id="eTime" type="time" value="${t.time}"></div>
+    <div><label class="f" for="eMgr">Quem faz</label><select class="in-f" id="eMgr">${S.users.map(u => `<option value="${u.id}" ${u.id===t.mgr?'selected':''}>${u.emoji} ${esc(u.name)}</option>`).join('')}</select></div></div>
+    <label class="f">Dias da semana</label><div class="days">${DIAS.map((d,i) => `<label><input type="checkbox" class="eDay" value="${i}" ${t.days.includes(i)?'checked':''}><span>${d}</span></label>`).join('')}</div>
+    <label class="f" for="eType">Como comprovar</label><select class="in-f" id="eType">${Object.entries(TIPOS).map(([k,v]) => `<option value="${k}" ${k===t.type?'selected':''}>${v.e} ${v.n}</option>`).join('')}</select>
+    <div id="xNum" class="${t.type==='numero'?'':'hidden'} grid2"><div><label class="f" for="eUnit">Unidade</label><input class="in-f" id="eUnit" value="${esc(t.unit||'')}" placeholder="%, °C, kg…"></div>
+      <div><label class="f" for="eMin">Me avisar se ficar abaixo de</label><input class="in-f" id="eMin" type="number" inputmode="decimal" value="${t.min ?? ''}"></div></div>
+    <div id="xCk" class="${t.type==='checklist'?'':'hidden'}"><label class="f" for="eItems">Itens (um por linha)</label><textarea class="in-f" id="eItems">${esc((t.items||[]).join('\n'))}</textarea></div>
+    <label class="f" for="eHint">Instruções para o gerente (opcional)</label><input class="in-f" id="eHint" value="${esc(t.hint||'')}">
+    <label class="f" for="ePts">Valor da missão</label><select class="in-f" id="ePts">${[[5,'Leve · 5 pts'],[10,'Normal · 10 pts'],[15,'Importante · 15 pts'],[20,'Crítica · 20 pts']].map(([v,n]) => `<option value="${v}" ${v==t.pts?'selected':''}>${n}</option>`).join('')}</select>
+    <label class="check" style="margin-top:14px"><input type="checkbox" id="eAct" ${t.active?'checked':''}><span>Rotina ativa</span></label>
+    <button class="btn" style="margin-top:16px" data-act="saveTask" data-v="${t.id}">Salvar rotina</button>
+    ${tid ? `<button class="btn ghost" style="margin-top:10px;color:var(--red)" data-act="delTask" data-v="${t.id}">Apagar rotina</button>` : ''}`);
+  $('#eType').addEventListener('change', e => { $('#xNum').classList.toggle('hidden', e.target.value !== 'numero'); $('#xCk').classList.toggle('hidden', e.target.value !== 'checklist'); });
+}
+function saveTask(id){
+  const title = $('#eTitle').value.trim(), time = $('#eTime').value;
+  const days = [...document.querySelectorAll('.eDay:checked')].map(x => Number(x.value));
+  const type = $('#eType').value;
+  if (!title) return toast('Dê um nome para a rotina.');
+  if (!time) return toast('Escolha o horário.');
+  if (!days.length) return toast('Escolha pelo menos um dia.');
+  const items = $('#eItems').value.split('\n').map(s => s.trim()).filter(Boolean);
+  if (type === 'checklist' && !items.length) return toast('Escreva os itens do checklist.');
+  if (!S.users.length) return toast('Cadastre um gerente primeiro (aba Equipe).');
+  const minV = $('#eMin').value;
+  const data = {title, time, days, type, mgr:$('#eMgr').value, hint:$('#eHint').value.trim(), pts:Number($('#ePts').value), active:$('#eAct').checked,
+    unit:$('#eUnit').value.trim(), min: minV === '' ? null : Number(minV), items};
+  if (id) Object.assign(task(id), data); else S.tasks.push({id:uid(), ...data});
+  save(); closeSheet(); render(); toast('✅ Rotina salva.');
+}
+
+/* ---------- notificações ---------- */
+let SWR = null;
+const notified = (() => { try { return JSON.parse(localStorage.getItem(KEY+'.notif')) || {}; } catch(e){ return {}; } })();
+function markNotified(k){ notified[k] = 1; try { localStorage.setItem(KEY+'.notif', JSON.stringify(notified)); } catch(e){} }
+async function askNotif(){
+  if (!('Notification' in window)){
+    return toast('Este navegador não mostra notificações. No iPhone: toque em Compartilhar › “Adicionar à Tela de Início” e abra o app por lá.');
+  }
+  if (Notification.permission === 'denied') return toast('As notificações foram bloqueadas. Libere nas configurações do navegador para este site.');
+  const p = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+  render();
+  if (p === 'granted') notify('🔔 Lembretes ligados!', 'Você vai receber um aviso na hora de cada rotina.', 'teste');
+}
+function notify(title, body, tag){
+  toast(`<b>${title}</b><br>${body}`);
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const opt = {body, tag, icon:'icon-192.png', badge:'icon-192.png', vibrate:[80,40,80], data:{url:location.href}};
+  try {
+    if (SWR) SWR.showNotification(title, opt); else new Notification(title, opt);
+  } catch(e){}
+}
+function tick(){
+  if (!ME) return;
+  const dk = today();
+  for (const t of tasksOn(dk, ME.role === 'ger' ? ME.id : null)){
+    const st = status(t, dk), u = user(t.mgr);
+    if (ME.role === 'ger'){
+      if (st.s === 'agora' && st.diff >= 0 && !notified[`${dk}|${t.id}|hora`]){ markNotified(`${dk}|${t.id}|hora`); notify(`⏰ ${t.time} · ${t.title}`, `Missão valendo +${t.pts+5} XP. Bora!`, t.id); }
+      if (st.s === 'atrasada' && !notified[`${dk}|${t.id}|atr`]){ markNotified(`${dk}|${t.id}|atr`); notify(`⚠️ Atrasada: ${t.title}`, `Era às ${t.time}. Ainda dá tempo de garantir metade dos pontos.`, t.id); }
+    } else {
+      if (st.s === 'atrasada' && !notified[`${dk}|${t.id}|dono`]){ markNotified(`${dk}|${t.id}|dono`); notify(`${u ? u.name : 'Ninguém'} ainda não fez: ${t.title}`, `Era às ${t.time} · atraso de ${atraso(st.late)}.`, 'd'+t.id); }
+      if (st.s === 'feito' && problem(st.r, t) && !notified[`${dk}|${t.id}|prob`]){ markNotified(`${dk}|${t.id}|prob`); notify(`⚠️ ${t.title}`, `${u ? u.name : ''} ${problem(st.r, t)}`, 'p'+t.id); }
+    }
+  }
+}
+
+/* ---------- avisos rápidos ---------- */
+let toastT;
+function toast(html){
+  document.querySelector('.toast')?.remove();
+  const d = document.createElement('div'); d.className = 'toast'; d.setAttribute('role','status'); d.innerHTML = html;
+  document.body.appendChild(d); clearTimeout(toastT); toastT = setTimeout(() => d.remove(), 4200);
+}
+
+/* ---------- cliques ---------- */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const a = el.dataset.act, v = el.dataset.v;
+  if (a === 'closeBg' && e.target !== el) return;
+  switch (a){
+    case 'login': ME = v === 'dono' ? {role:'dono'} : {role:'ger', id:v}; saveMe(); TAB = 'hoje'; render(); scrollTo(0,0);
+      if ('Notification' in window && Notification.permission === 'default') setTimeout(() => toast('🔔 Toque no sininho lá em cima para ligar os lembretes.'), 800);
+      // marca como já avisado o que ficou para trás, para não chover notificação ao entrar
+      { const dk = today(); for (const t of tasksOn(dk)) { const st = status(t, dk); if (st.s === 'atrasada' || st.s === 'feito'){ ['atr','dono','prob','hora'].forEach(k => notified[`${dk}|${t.id}|${k}`] = 1); } } try { localStorage.setItem(KEY+'.notif', JSON.stringify(notified)); } catch(e){} }
+      break;
+    case 'logout': ME = null; saveMe(); render(); break;
+    case 'tab': TAB = v; render(); scrollTo(0,0); break;
+    case 'notif': askNotif(); break;
+    case 'do': e.stopPropagation(); openDo(v); break;
+    case 'yn': DRAFT.val = v; document.querySelectorAll('.yn button').forEach(b => b.classList.toggle('sel', b === el)); $('#noteBox').classList.toggle('hidden', v !== 'nao'); if (v === 'nao') $('#note').focus(); break;
+    case 'finish': finish(); break;
+    case 'close': case 'closeBg': closeSheet(); break;
+    case 'partyNext': if (PARTY.length) party(PARTY); else closeSheet(); break;
+    case 'proof': openProof(v); break;
+    case 'edit': openEdit(v); break;
+    case 'saveTask': saveTask(v); break;
+    case 'delTask': if (confirm('Apagar esta rotina? O histórico dela some dos relatórios.')){ S.tasks = S.tasks.filter(t => t.id !== v); save(); closeSheet(); render(); } break;
+    case 'addUser': sheet(`<div class="row between"><h3>Novo gerente</h3><button class="chip-btn" data-act="close" aria-label="Fechar">✕</button></div>
+      <label class="f" for="nName">Nome</label><input class="in-f" id="nName">
+      <label class="f" for="nTurno">Turno</label><input class="in-f" id="nTurno" placeholder="Manhã, Tarde, Noite…">
+      <label class="f">Mascote</label><div class="days">${['🦊','🐻','🦁','🐯','🐼','🦉','🐺','🐙'].map((m,i) => `<label><input type="radio" name="nEmo" value="${m}" ${i===0?'checked':''}><span style="font-size:20px;padding:6px 0">${m}</span></label>`).join('')}</div>
+      <button class="btn" style="margin-top:16px" data-act="saveUser">Adicionar</button>`); break;
+    case 'saveUser': { const n = $('#nName').value.trim(); if (!n) return toast('Escreva o nome.');
+      const cols = ['#2CC5D0','#FFA65C','#5BE49B','#FFD27A','#C69CFF','#FF6B7A'];
+      S.users.push({id:uid(), name:n, turno:$('#nTurno').value.trim(), emoji:document.querySelector('[name=nEmo]:checked').value, color:cols[S.users.length % cols.length]});
+      save(); closeSheet(); render(); toast('👋 Gerente adicionado.'); break; }
+    case 'delUser': { const u = user(v); if (!confirm(`Remover ${u.name}? As rotinas dele ficam sem responsável.`)) return;
+      S.users = S.users.filter(x => x.id !== v); save(); render(); break; }
+    case 'saveReward': S.reward = {text:$('#rwText').value.trim(), goal:Math.max(1, Number($('#rwGoal').value) || 1000)}; save(); render(); toast('🎁 Prêmio salvo. A equipe já vê no app.'); break;
+    case 'saveCo': S.company = $('#coName').value.trim() || 'Seu Restaurante'; save(); render(); toast('Nome salvo.'); break;
+    case 'reset': if (confirm('Apagar TODAS as rotinas, gerentes e histórico deste aparelho?')){ S = {company:'Seu Restaurante', users:[], tasks:[], recs:[], reward:{text:'', goal:1000}}; save(); ME = {role:'dono'}; saveMe(); TAB='equipe'; render(); } break;
+    case 'demo': if (confirm('Trocar tudo pelo exemplo de demonstração?')){ S = seed(); save(); render(); } break;
+  }
+});
+
+/* ---------- início ---------- */
+load(); render();
+setInterval(() => { tick(); if (ME && !$('#layer').innerHTML) render(); }, 30000);
+setTimeout(tick, 1500);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && ME && !$('#layer').innerHTML){ render(); tick(); } });
+if ('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(() => navigator.serviceWorker.ready).then(r => { SWR = r; }).catch(() => {});
+}
+</script>
+</body>
+</html>
