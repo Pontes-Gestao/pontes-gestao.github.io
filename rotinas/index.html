@@ -222,7 +222,7 @@ textarea.in-f{min-height:90px;resize:vertical}
    Protótipo: os dados ficam guardados no próprio aparelho.
    ============================================================ */
 const APP = 'Ronda';
-const KEY = 'ronda.v2';
+const KEY = 'ronda.v3';
 const TOL = 15;           // minutos de tolerância antes de contar como atraso
 const SOON = 30;          // minutos antes do horário em que a missão já pode ser feita
 const DIAS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -257,8 +257,7 @@ const medal = i => i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : `${i+1}º`
 let S, ME, TAB, PERIODO = 'sem', PICK = null, IDX = null;
 
 function seed(){
-  const bairros = ['Centro','Shopping Norte','Jardim América','Vila Nova','Bela Vista','Santa Cruz','Parque das Flores','São José','Boa Vista',
-    'Aeroporto','Lagoa','Alto da Serra','Rodoviária','Beira-Mar','Universidade','Estação','Shopping Sul'];
+  const bairros = ['Biggs 1 · Av. Maringá','Biggs 2 · Av. S. Dumont','Biggs 3 · Rua Goiás','Biggs 4 · Av. W. Churchill','Biggs 5 · Av. Portugal','Biggs 6 · Av. Higienópolis','Biggs 7 · Av. Jamil Scaff','Biggs 8 · Pizzas & Massas','Biggs 9 · Biggs Street','Biggs 10 · Av. das Maritacas','Biggs 11 · Santo Amaro','Biggs 12 · Saul Elkind','Biggs 13 · Av. Arthur Thomas'];
   const nomes = ['Carla','João','Ana','Pedro','Juliana','Rafael','Bruna','Diego','Camila','Lucas','Fernanda','Marcos','Patrícia','Tiago','Larissa','Bruno','Aline',
     'Felipe','Renata','Gustavo','Vanessa','André','Priscila','Rodrigo','Daniela','Leandro','Simone','Fábio','Tatiane','Márcio','Elaine','Igor','Natália','Vítor'];
   let r = 11;
@@ -279,7 +278,7 @@ function seed(){
     T('Fechar o ponto','15:00','Tarde','sim',{hint:'Todos bateram o ponto de saída do turno?'}),
     T('Feedback de troca de turno','17:00','Tarde','texto',{pts:15,hint:'O que o próximo turno precisa saber? Faltas, problemas, pendências.'})
   ];
-  const s = {company:'Rede Exemplo', stores, users, tasks, recs:[]};
+  const s = {company:'Biggs', stores, users, tasks, recs:[]};
   // histórico de exemplo: cada loja com um "capricho" diferente, para o ranking ter graça
   const nm = nowMin();
   const capricho = {}; stores.forEach(st => capricho[st.id] = .62 + rnd()*.36);
