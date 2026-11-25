@@ -393,8 +393,7 @@ function notifIcon(){
 }
 function viewPick(){
   return `<div style="text-align:center;margin-top:8vh">
-    <img src="icon-192.png" alt="" style="width:84px;height:84px;border-radius:22px;box-shadow:0 0 0 1px var(--line-hi),0 0 40px -6px rgba(44,197,208,.7)">
-    <h1 style="font-family:var(--display);letter-spacing:.14em;color:var(--cyan);font-size:34px;margin-top:14px">${APP.toUpperCase()}</h1>
+    <h1 style="margin:0"><img src="logo.png" alt="${APP}" style="width:min(300px,80vw);height:auto;mix-blend-mode:lighten"></h1>
     <p class="muted" style="margin-top:6px">As rotinas do restaurante viram missões.<br>O gerente joga, o dono acompanha.</p></div>
     <div class="pick">
       <button data-act="login" data-v="dono"><span class="avatar" style="--c:var(--gold)">👑</span><span><b>Sou o dono / gestor</b><span class="muted small">Crio as rotinas e acompanho tudo</span></span></button>
