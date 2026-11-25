@@ -4,13 +4,20 @@ Protótipo que já funciona no celular: `gestaopontes.com/rotinas/` (depois de p
 Dá para "instalar" pela opção **Adicionar à tela de início** do navegador.
 
 ## O que já faz
-- **Dono (master):** cria rotinas (horário, dias, responsável, tipo de comprovação, pontos),
-  vê em tempo real o que está atrasado ("Carla ainda não fez…"), problemas relatados,
-  fotos, gráfico de pontualidade, insights automáticos e define o prêmio do mês.
+- **Rede de lojas:** o gestor (master) cria cada rotina uma vez e escolhe em quais lojas
+  (todas ou algumas) e em qual turno ela vale. Em cada loja, o gerente do turno recebe a missão.
+- **Gestor:** vê em tempo real o que está atrasado em cada loja ("Loja Centro: Carla ainda não fez…"),
+  problemas relatados, fotos, gráfico da rede, insights (melhor e pior loja, rotina que mais atrasa,
+  lojas com gás baixo) e o **ranking das lojas**.
+- **Ranking das lojas:** índice de preenchimento (no horário vale 1, atrasada ½, esquecida 0),
+  por hoje, 7 dias ou mês. Também tem o ranking dos gerentes da rede por XP.
 - **Gerente:** recebe as rotinas como missões, com lembrete na hora, e comprova com
-  foto, sim/não, número (ex.: % do gás, com alerta se ficar baixo), texto ou checklist.
-- **Jogo:** XP, bônus por pontualidade, combo, 7 níveis, sequência de dias (🔥),
-  9 conquistas, ranking semanal/mensal e prêmio real do mês.
+  foto, sim/não, número (com alerta se ficar abaixo do mínimo), texto ou checklist.
+  Vê a posição da loja dele e quanto falta para passar a próxima.
+- **Jogo:** XP, bônus por pontualidade, combo, 7 níveis, sequência de dias (🔥) e 10 conquistas.
+  Os pontos só acumulam; não há prêmio definido.
+- **Notificações:** sininho no topo, com botão "Testar notificação" (chega em 5 segundos).
+  Também fica em Lojas › Configurações.
 
 ## Limite desta versão (importante antes de vender)
 Os dados ficam **no próprio aparelho**. Para o dono ver no celular dele o que o gerente
